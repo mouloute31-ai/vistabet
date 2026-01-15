@@ -70,14 +70,32 @@ export default function Home() {
               Pronostiquez les matchs de la Coupe du Monde 2026 et gagnez des points
               échangeables contre des réductions sur la boutique VistaCup!
             </p>
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <div className="access-notice" style={{
+              background: 'rgba(245, 158, 11, 0.15)',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+              borderRadius: '12px',
+              padding: '1rem 1.5rem',
+              marginBottom: '1.5rem',
+              maxWidth: '500px',
+              marginLeft: 'auto',
+              marginRight: 'auto'
+            }}>
+              <p style={{ margin: 0, fontSize: '0.9rem', color: '#fbbf24' }}>
+                <strong>Accès exclusif</strong> - La participation aux pronostics est réservée aux clients VistaCup.
+                Effectuez un achat sur notre boutique pour débloquer l'accès!
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <a href="https://ytibyd-vn.myshopify.com" className="btn btn-primary" target="_blank" rel="noopener">
+                Acheter sur VistaCup
+              </a>
               {user ? (
-                <Link href="/matches" className="btn btn-primary">
+                <Link href="/matches" className="btn btn-secondary">
                   Faire un pronostic
                 </Link>
               ) : (
-                <Link href="/profile" className="btn btn-primary">
-                  S'inscrire (+50 pts offerts)
+                <Link href="/profile" className="btn btn-secondary">
+                  Connexion
                 </Link>
               )}
               <Link href="/leaderboard" className="btn btn-secondary">
