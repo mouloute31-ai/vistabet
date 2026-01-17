@@ -26,7 +26,7 @@ export async function GET(request) {
           name: 'Mexico',
           shortName: 'Mexico',
           code: 'MEX',
-          crest: 'https://crests.football-data.org/769.png',
+          crest: 'https://flagcdn.com/w160/mx.png',
           score: 2
         },
         team2: {
@@ -34,7 +34,7 @@ export async function GET(request) {
           name: 'South Africa',
           shortName: 'South Africa',
           code: 'RSA',
-          crest: 'https://crests.football-data.org/780.png',
+          crest: 'https://flagcdn.com/w160/za.png',
           score: 1
         },
         winner: 'team1'
@@ -69,7 +69,7 @@ export async function GET(request) {
           name: 'Mexico',
           shortName: 'Mexico',
           code: 'MEX',
-          crest: 'https://crests.football-data.org/769.png',
+          crest: 'https://flagcdn.com/w160/mx.png',
           score: 1
         },
         team2: {
@@ -77,7 +77,7 @@ export async function GET(request) {
           name: 'South Africa',
           shortName: 'South Africa',
           code: 'RSA',
-          crest: 'https://crests.football-data.org/780.png',
+          crest: 'https://flagcdn.com/w160/za.png',
           score: 1
         },
         winner: null
