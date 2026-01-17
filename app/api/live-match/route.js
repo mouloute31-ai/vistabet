@@ -2,6 +2,96 @@
 // Utilisé par PromoMatch sur Shopify
 
 export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const testMode = searchParams.get('test');
+
+  // Mode test pour simuler un match terminé avec promo active
+  if (testMode === 'finished') {
+    const now = new Date();
+    const promoExpiresAt = new Date(now.getTime() + 1 * 60 * 60 * 1000); // Expire dans 1h
+
+    return Response.json({
+      match: {
+        id: 999999,
+        status: 'finished',
+        date: new Date(now.getTime() - 30 * 60 * 1000).toISOString(), // Match fini il y a 30min
+        matchday: 1,
+        stage: 'GROUP_STAGE',
+        group: 'GROUP A',
+        minute: null,
+        promoStartsAt: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
+        promoExpiresAt: promoExpiresAt.toISOString(),
+        team1: {
+          id: 1,
+          name: 'Mexico',
+          shortName: 'Mexico',
+          code: 'MEX',
+          crest: 'https://crests.football-data.org/769.png',
+          score: 2
+        },
+        team2: {
+          id: 2,
+          name: 'South Africa',
+          shortName: 'South Africa',
+          code: 'RSA',
+          crest: 'https://crests.football-data.org/780.png',
+          score: 1
+        },
+        winner: 'team1'
+      },
+      lastUpdated: now.toISOString(),
+      testMode: true
+    }, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET',
+      }
+    });
+  }
+
+  // Mode test pour simuler un match live
+  if (testMode === 'live') {
+    const now = new Date();
+
+    return Response.json({
+      match: {
+        id: 999998,
+        status: 'live',
+        date: new Date(now.getTime() - 45 * 60 * 1000).toISOString(),
+        matchday: 1,
+        stage: 'GROUP_STAGE',
+        group: 'GROUP A',
+        minute: 45,
+        promoStartsAt: new Date(now.getTime() - 45 * 60 * 1000).toISOString(),
+        promoExpiresAt: null,
+        team1: {
+          id: 1,
+          name: 'Mexico',
+          shortName: 'Mexico',
+          code: 'MEX',
+          crest: 'https://crests.football-data.org/769.png',
+          score: 1
+        },
+        team2: {
+          id: 2,
+          name: 'South Africa',
+          shortName: 'South Africa',
+          code: 'RSA',
+          crest: 'https://crests.football-data.org/780.png',
+          score: 1
+        },
+        winner: null
+      },
+      lastUpdated: now.toISOString(),
+      testMode: true
+    }, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET',
+      }
+    });
+  }
+
   const API_KEY = process.env.FOOTBALL_DATA_API_KEY;
 
   if (!API_KEY) {
@@ -75,11 +165,14 @@ export async function GET(request) {
       });
     }
 
-    // Calculer l'expiration de la promo (2h après la fin estimée du match)
-    // Un match dure environ 2h (90min + mi-temps + arrêts)
+    // Calculer les dates de début et fin de la promo
+    // La promo commence au coup d'envoi et dure 2h après la fin du match
     const matchStartDate = new Date(currentMatch.utcDate);
-    const estimatedEndDate = new Date(matchStartDate.getTime() + 2 * 60 * 60 * 1000); // +2h après le début
-    const promoExpiresAt = new Date(estimatedEndDate.getTime() + 2 * 60 * 60 * 1000); // +2h après la fin
+    const estimatedEndDate = new Date(matchStartDate.getTime() + 2 * 60 * 60 * 1000); // +2h après le début (durée du match)
+    const promoExpiresAt = new Date(estimatedEndDate.getTime() + 2 * 60 * 60 * 1000); // +2h après la fin du match
+
+    // promoStartsAt = début du match (coup d'envoi)
+    // promoExpiresAt = 2h après la fin estimée du match (4h après le début)
 
     // Formater la réponse pour PromoMatch
     const formattedMatch = {
@@ -90,7 +183,8 @@ export async function GET(request) {
       stage: currentMatch.stage,
       group: currentMatch.group,
       minute: currentMatch.minute || null,
-      promoExpiresAt: currentMatch.status === 'FINISHED' ? promoExpiresAt.toISOString() : null,
+      promoStartsAt: matchStartDate.toISOString(),
+      promoExpiresAt: promoExpiresAt.toISOString(),
       team1: {
         id: currentMatch.homeTeam.id,
         name: currentMatch.homeTeam.name,
