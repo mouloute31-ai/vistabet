@@ -75,6 +75,12 @@ export async function GET(request) {
       });
     }
 
+    // Calculer l'expiration de la promo (2h après la fin estimée du match)
+    // Un match dure environ 2h (90min + mi-temps + arrêts)
+    const matchStartDate = new Date(currentMatch.utcDate);
+    const estimatedEndDate = new Date(matchStartDate.getTime() + 2 * 60 * 60 * 1000); // +2h après le début
+    const promoExpiresAt = new Date(estimatedEndDate.getTime() + 2 * 60 * 60 * 1000); // +2h après la fin
+
     // Formater la réponse pour PromoMatch
     const formattedMatch = {
       id: currentMatch.id,
@@ -84,6 +90,7 @@ export async function GET(request) {
       stage: currentMatch.stage,
       group: currentMatch.group,
       minute: currentMatch.minute || null,
+      promoExpiresAt: currentMatch.status === 'FINISHED' ? promoExpiresAt.toISOString() : null,
       team1: {
         id: currentMatch.homeTeam.id,
         name: currentMatch.homeTeam.name,
